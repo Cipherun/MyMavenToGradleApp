@@ -1,20 +1,47 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+plugins {
+    id 'java'
+    id 'application'
+}
 
 group = 'com.example'
 version = '1.0-SNAPSHOT'
 
-description = """MyMavenToGradle"""
-
-sourceCompatibility = 11
-targetCompatibility = 11
-
-
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 repositories {
-        
-     maven { url "https://repo.maven.apache.org/maven2" }
+    mavenCentral()
 }
+
 dependencies {
-    testCompile group: 'junit', name: 'junit', version:'3.8.1'
+    // Selenium
+    implementation 'org.seleniumhq.selenium:selenium-java:4.29.0'
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    
+    // Optional: Better logging
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+}
+
+application {
+    mainClass = 'com.example.App'
+}
+
+test {
+    testLogging {
+        events 'PASSED', 'FAILED', 'SKIPPED'
+        exceptionFormat = 'full'
+    }
+    
+    // Pass system properties for WebDriver
+    systemProperty "webdriver.chrome.driver", System.getProperty("webdriver.chrome.driver")
+}
+
+// Task to run the Selenium tests
+task runSelenium(type: JavaExec) {
+    mainClass = 'com.example.App'
+    classpath = sourceSets.main.runtimeClasspath
 }
